@@ -11,13 +11,13 @@ export default {
 		.setDMPermission(true),
 	dmOnly: true,
 	async execute(interaction) {
-		if (!interaction.isChatInputCommand() || !interaction.guildId)
+		if (!interaction.isChatInputCommand())
 			return 0;
 
 		const userServers = getUserSavedPasswordServers(interaction.user.id);
 
-		if (!userServers) {
-			interaction.reply({
+		if (!userServers?.length) {
+			await interaction.reply({
 				content: 'Não encontramos nenhum servidor com senhas suas guardadas. Tente registrar senhas em algum deles e tente novamente',
 				ephemeral: true,
 			});
@@ -28,11 +28,11 @@ export default {
 			.setColor(DEFAULT_EMBED_COLOR)
 			.setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
 			.setTitle('Listagem de servidores com senhas suas')
-			.setDescription('Abaixo estão os nomes de senhas que você registrou neste servidor.\n\nUtilize o comando `get-password` para obter o valor por trás do nome');
+			.setDescription('Abaixo estão os servidores que possuem alguma');
 
 		const bot = interaction.client;
 		embed.addFields(
-			userServers.map((server, index) => {
+			userServers.map(server => {
 				const guild = bot.guilds.cache.get(server.serverId);
 
 				if (!guild) {
@@ -43,13 +43,13 @@ export default {
 				}
 
 				return {
-					name: `Servidor númer ${index + 1}`,
-					value: server.serverId,
+					name: guild.name,
+					value: `Total de senhas: ${server.totalPasswords}`,
 					inline: true,
 				};
 			}).filter(field => field.name !== 'none'));
 
-		interaction.reply({
+		await interaction.reply({
 			embeds: [embed],
 			ephemeral: true,
 		});

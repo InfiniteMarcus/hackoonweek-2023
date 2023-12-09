@@ -8,3 +8,9 @@ export type UserPasswords = {
     masterPassword?: string;
     passwords: UserPassword[],
 };
+
+export type MasterPassword = {
+    userId: string;
+    salt: string;
+    password: string;
+}

@@ -1,29 +1,29 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
 import { Command } from '../../types';
-import { changeMasterPassword } from '../../system';
+import { setMasterPassword } from '../../system';
 import { DEFAULT_EMBED_COLOR } from '../../constants';
 
 export default {
 	data: new SlashCommandBuilder()
 		.setName('create-master-password')
 		.setDescription('Cria uma senha mestra para o seu gerenciador de senhas')
-		.setDMPermission(false)
+		.setDMPermission(true)
 		.addStringOption(option => option.setName('senha-mestra')
 			.setDescription('Senha mestra que será usada para acessar ou alterar dados das suas senhas no bot')
 			.setRequired(true),
 		),
 	dmOnly: true,
 	async execute(interaction) {
-		if (!interaction.isChatInputCommand() || !interaction.guildId)
+		if (!interaction.isChatInputCommand())
 			return 0;
 
 		const masterPassword = interaction.options.getString('senha-mestra', true);
-		const userServers = changeMasterPassword(interaction.user.id, masterPassword);
+		const userServers = setMasterPassword(interaction.user.id, masterPassword);
 
 		if (!userServers) {
 			interaction.reply({
-				content: 'Não foi possível salvar sua senha mestra. Tente novamente',
+				content: 'Não foi possível salvar sua senha mestra. Tente novamente ou entre em contato com o nosso suporte para alterá-la',
 				ephemeral: true,
 			});
 			return 0;

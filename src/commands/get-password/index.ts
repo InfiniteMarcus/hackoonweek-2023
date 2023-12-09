@@ -1,7 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
 import { Command } from '../../types';
-import { getUserPasswordByPasswordName } from '../../system';
+import { checkMasterPassword, getUserPasswordByPasswordName } from '../../system';
 import { DEFAULT_EMBED_COLOR } from '../../constants';
 
 export default {
@@ -9,16 +9,30 @@ export default {
 		.setName('get-password')
 		.setDescription('Busca senha salva previamente pelo nome atribuído')
 		.setDMPermission(false)
+		.addStringOption(option => option.setName('senha-mestra')
+			.setDescription('Coloque sua senha-mestra')
+			.setRequired(true),
+		)
 		.addStringOption(option => option.setName('nome')
-			.setDescription('Nome atrelado a senha que você deseja')
+			.setDescription('Nome atrelado a senha que você deseja buscar')
 			.setRequired(true),
 		),
 	async execute(interaction) {
 		if (!interaction.isChatInputCommand() || !interaction.guildId)
 			return 0;
 
-		const passwordName = interaction.options.getString('nome', true);
+		const masterPassword = interaction.options.getString('senha-mestra', true);
 
+		const isMasterPasswordCorrect = checkMasterPassword(interaction.user.id, masterPassword);
+		if (!isMasterPasswordCorrect) {
+			interaction.reply({
+				content: 'Senha-mestra incorreta ou não configurada. Verifique e tente novamente, ou registre uma com o comando `create-master-password`',
+				ephemeral: true,
+			});
+			return 0;
+		}
+
+		const passwordName = interaction.options.getString('nome', true);
 		const password = getUserPasswordByPasswordName(interaction.guildId, interaction.user.id, passwordName);
 
 		if (!password) {

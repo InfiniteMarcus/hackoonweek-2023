@@ -47,14 +47,12 @@ bot.on(Events.InteractionCreate, async (interaction) => {
 	const commandName = anyInteraction.commandName;
 	const command = commands.get(commandName);
 
-	console.log(command);
-
 	if (!command) {
 		return;
 	}
 
 	if (command.dmOnly && interaction.guildId) {
-		interaction.reply({
+		await interaction.reply({
 			content: 'Este comando somente pode ser usado em minha DM com você',
 			ephemeral: true,
 		});
@@ -65,10 +63,6 @@ bot.on(Events.InteractionCreate, async (interaction) => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		interaction.reply({
-			content: 'Houve algum problema ao executar o comando. Tente novamente em instantes',
-			ephemeral: true,
-		});
 	}
 });
 

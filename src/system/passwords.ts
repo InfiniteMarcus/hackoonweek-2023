@@ -1,11 +1,13 @@
 import { Collection } from 'discord.js';
 import crypto from 'crypto';
 
-import { UserPasswords, UserPassword } from '../types';
+import { MasterPassword, UserPasswords, UserPassword } from '../types';
 
 const cryptoAlgorithm = 'aes256';
 const iv = Buffer.alloc(16, 0);
+
 const passwords = new Collection<string, UserPasswords[]>();
+const masterPasswords: MasterPassword[] = [];
 
 export function getUserPasswordsInServer(serverId: string, userId: string) {
 	const usersPasswords = passwords.get(serverId);
@@ -72,7 +74,7 @@ export function createUserPasswordsInServer(serverId: string, userId: string) {
 	return true;
 }
 
-export function insertPasswordInServer(serverId: string, userId: string, password: UserPassword) {
+export function insertPasswordInServer(serverId: string, userId: string, userPassword: UserPassword) {
 	let userPasswords = getUserPasswordsInServer(serverId, userId);
 
 	if (!userPasswords) {
@@ -85,16 +87,18 @@ export function insertPasswordInServer(serverId: string, userId: string, passwor
 		return false;
 	}
 
+	if (userPasswords.passwords.find(usrPassword => usrPassword.name === userPassword.name)) {
+		return false;
+	}
+
 	const secret = String(process.env.ENCRYPTION_SECRET);
 	const cipher = crypto.createCipheriv(cryptoAlgorithm, secret, iv);
-	const encryptedPassword = cipher.update(password.password, 'utf8', 'hex') + cipher.final('hex');
+	const encryptedPassword = cipher.update(userPassword.password, 'utf8', 'hex') + cipher.final('hex');
 
 	userPasswords.passwords.push({
-		name: password.name,
+		name: userPassword.name,
 		password: encryptedPassword,
 	});
-
-	console.log(`SENHA ENCRIPTADA: ${encryptedPassword}`);
 
 	return true;
 }
@@ -124,10 +128,31 @@ export function getUserSavedPasswordServers(userId: string) {
 	return userServers;
 }
 
-export function changeMasterPassword(userId: string, masterPassword: string) {
-	const secret = String(process.env.ENCRYPTION_SECRET);
-	const cipher = crypto.createCipheriv(cryptoAlgorithm, secret, iv);
-	const encryptedMasterPassword = cipher.update(masterPassword, 'utf8', 'hex') + cipher.final('hex');
-	console.log(encryptedMasterPassword);
+export function setMasterPassword(userId: string, masterPassword: string) {
+	const salt = crypto.randomBytes(16).toString('hex');
+	const hash = crypto.pbkdf2Sync(masterPassword, salt, 1000, 64, 'sha512').toString('hex');
+
+	if (masterPasswords.find(mp => mp.userId === userId)) {
+		return false;
+	}
+
+	masterPasswords.push({
+		userId,
+		salt,
+		password: hash,
+	});
+
 	return true;
+}
+
+export function checkMasterPassword(userId: string, passwordToCheck: string) {
+	const masterPassword = masterPasswords.find(mp => mp.userId === userId);
+
+	if (!masterPassword) {
+		return false;
+	}
+
+	const hashToCheck = crypto.pbkdf2Sync(passwordToCheck, masterPassword.salt, 1000, 64, 'sha512').toString('hex');
+
+	return masterPassword.password === hashToCheck;
 }
