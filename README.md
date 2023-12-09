@@ -22,5 +22,16 @@ Por ser uma prova de conceito, todas as senhas estão armazenadas em memória e 
 - Use o comando `npm start` para executar o código
 - Abra o aplicativo do Discord e utilize os comandos em algum servidor em que o bot esteja instalado
 
+## Funcionalidades
+- **Senha-mestra**: cria uma senha-mestra para o usuário que deverá ser passada na hora de buscar uma senha em um servidor
+- **Listagem de servidores**: lista todos os servidores e a quantidade de senhas registradas pelo usuário
+- **Listagem de senhas**: por servidor, lista os nomes de todas as senhas cadastradas
+- **Inserção de senha**: por servidor, insere uma nova senha e um nome para esta senha
+- **Remoção de senha**: por servidor, remove uma senha buscando-a por nome
+- **Busca de senha**: por servidor, busque uma senha pelo nome colocado nela 
+
+### Observações
+- A senha-mestra só pode ser configurada uma vez, durante a execução do programa
+
 ## Autores
 - Marcus Natrielli - [@MarcusNatrielli](https://linktr.ee/marcusnatrielli)
