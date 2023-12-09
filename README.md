@@ -23,4 +23,4 @@ Por ser uma prova de conceito, todas as senhas estão armazenadas em memória e 
 - Abra o aplicativo do Discord e utilize os comandos em algum servidor em que o bot esteja instalado
 
 ## Autores
-- Marcus Natrielli - @MarcusNatrielli
+- Marcus Natrielli - [@MarcusNatrielli](https://linktr.ee/marcusnatrielli)

@@ -41,10 +41,13 @@ bot.on(Events.InteractionCreate, async (interaction) => {
 		return;
 	}
 
-	console.log('Comando recebido');
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const anyInteraction = interaction as any;
 
-	const commandName = interaction.commandName;
+	const commandName = anyInteraction.commandName;
 	const command = commands.get(commandName);
+
+	console.log(command);
 
 	if (!command) {
 		return;

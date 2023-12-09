@@ -5,5 +5,6 @@ export type UserPassword = {
 
 export type UserPasswords = {
     userId: string;
+    masterPassword?: string;
     passwords: UserPassword[],
 };

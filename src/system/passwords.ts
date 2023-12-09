@@ -93,6 +93,9 @@ export function insertPasswordInServer(serverId: string, userId: string, passwor
 		name: password.name,
 		password: encryptedPassword,
 	});
+
+	console.log(`SENHA ENCRIPTADA: ${encryptedPassword}`);
+
 	return true;
 }
 
@@ -122,6 +125,9 @@ export function getUserSavedPasswordServers(userId: string) {
 }
 
 export function changeMasterPassword(userId: string, masterPassword: string) {
-	console.log(userId, masterPassword);
+	const secret = String(process.env.ENCRYPTION_SECRET);
+	const cipher = crypto.createCipheriv(cryptoAlgorithm, secret, iv);
+	const encryptedMasterPassword = cipher.update(masterPassword, 'utf8', 'hex') + cipher.final('hex');
+	console.log(encryptedMasterPassword);
 	return true;
 }
