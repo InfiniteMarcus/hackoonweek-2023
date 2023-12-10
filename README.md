@@ -28,10 +28,14 @@ Por ser uma prova de conceito, todas as senhas estão armazenadas em memória e 
 - **Listagem de senhas**: por servidor, lista os nomes de todas as senhas cadastradas
 - **Inserção de senha**: por servidor, insere uma nova senha e um nome para esta senha
 - **Remoção de senha**: por servidor, remove uma senha buscando-a por nome
-- **Busca de senha**: por servidor, busque uma senha pelo nome colocado nela 
+- **Busca de senha**: por servidor, busque uma senha pelo nome colocado nela
 
 ### Observações
 - A senha-mestra só pode ser configurada uma vez, durante a execução do programa
+
+## Próximos passos
+Em futuras versões pós competição, algumas ideias a serem implementadas seriam:
+- Comando gerador de senhas aleatórias
 
 ## Autores
 - Marcus Natrielli - [@MarcusNatrielli](https://linktr.ee/marcusnatrielli)
